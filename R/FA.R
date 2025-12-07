@@ -1,3 +1,22 @@
+#' Principal Component Analysis for Factor Models
+#'
+#' @description Principal Component Analysis for Factor Models
+#'
+#' @param X Input matrix, of dimension \eqn{T\times N}. Each row is an observation with \eqn{N} features at time point \eqn{t}.
+#' @param r A positive integer indicating the factor numbers.
+#'
+#' @return A list containing:
+#' \item{Fhat}{The estimated factor matrix.}
+#' \item{Lhat}{The estimated loading matrix.}
+#'
+#' @author Jiaqi Hu
+#'
+#' @examples
+#' \donttest{
+#' dat = gendata()
+#' FA(dat$Y, r = 3)
+#' }
+#' @export
 FA <- function(X, r) {
   T = nrow(X)
   N = ncol(X)
@@ -28,6 +47,24 @@ FA <- function(X, r) {
 }
 
 
+#' Estimating Factor Numbers Corresponding PCA
+#'
+#' @description Estimating Factor Numbers Corresponding PCA
+#'
+#' @param X Input matrix, of dimension \eqn{T\times N}. Each row is an observation with \eqn{N} features at time point \eqn{t}.
+#' @param kmax The user-supplied maximum factor numbers.
+#' @param type The method used. Options include "PC1", "PC2", "PC3", "IC1", "IC2", "IC3", "AIC3", "BIC3", "ER", "GR".
+#'
+#' @return The estimated factor numbers.
+#'
+#' @author Jiaqi Hu
+#'
+#' @examples
+#' \donttest{
+#' dat = gendata()
+#' est_num(dat$Y, kmax = 8, type = "BIC3")
+#' }
+#' @export
 est_num <- function(X, kmax = 8, type = "BIC3") {
   if (is.na(match(type, c("PC1", "PC2", "PC3", "IC1", "IC2", "IC3", "AIC3", "BIC3", "ER", "GR")))) {
     stop("Wrong input type")

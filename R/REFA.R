@@ -1,3 +1,30 @@
+#' Robust Exponential Factor Analysis
+#'
+#' @description Robust Exponential Factor Analysis
+#'
+#' @param Y Input matrix, of dimension \eqn{T\times N}. Each row is an observation with \eqn{N} features at time point \eqn{t}.
+#' @param r A positive integer indicating the factor numbers.
+#' @param tau Hyper parameter in selecting \eqn{\gamma} of the loss function.
+#' @param q Hyper parameter used in the initializations, truncated PCA.
+#' @param eps The stopping criterion parameter. The default is 1e-5.
+#' @param init Warm start of the algorithm. If \code{init = TRUE}, use truncated PCA initialization. If \code{init} is a list contains \code{F0} and \code{L0}, we will use this initialization. Otherwise, use traditional PCA initialization.
+#'
+#' @return A list containing:
+#' \item{Fhat}{The estimated factor matrix.}
+#' \item{Lhat}{The estimated loading matrix.}
+#' \item{loss}{The value of the loss function.}
+#'
+#' @references Robust factor analysis with exponential squared loss. Jiaqi Hu, Tingyin Wang, Xueqin Wang. Journal of Multivariate Analysis 2026, 213 105567; doi:10.1016/j.jmva.2025.105567
+#' @author Jiaqi Hu
+#'
+#' @examples
+#' \donttest{
+#' # Assuming gendata() is defined in your package
+#' dat = gendata()
+#' REFA(dat$Y, r = 3)
+#' }
+#' @importFrom stats median quantile rnorm nlm
+#' @export
 REFA <- function(Y, r = 3, tau = 0.75, q = 0.05, eps = 1e-05, init = TRUE) {
   T = nrow(Y)
   N = ncol(Y)
@@ -48,6 +75,33 @@ REFA <- function(Y, r = 3, tau = 0.75, q = 0.05, eps = 1e-05, init = TRUE) {
   return(list(Fhat = F, Lhat = L, loss = loss))
 }
 
+#' Estimating Factor Numbers via Modified Rank Minimization
+#'
+#' @description Estimating Factor Numbers via Modified Rank Minimization
+#'
+#' @param Y Input matrix, of dimension \eqn{T\times N}. Each row is an observation with \eqn{N} features at time point \eqn{t}.
+#' @param rmax The bound of the number of factors.
+#' @param tau Hyper parameter in selecting \eqn{\gamma} of the loss function.
+#' @param q Hyper parameter used in the initializations, truncated PCA. Default is \code{0.05}.
+#' @param eps The stopping criterion parameter. Default is \code{1e-5}.
+#' @param init Warm start by truncated PCA algorithm. Default is \code{TRUE}.
+#'
+#' @return A list containing:
+#' \item{rhat}{The estimated factor number.}
+#' \item{Fhat}{The estimated factor matrix.}
+#' \item{Lhat}{The estimated loading matrix.}
+#' \item{loss}{The value of the loss function.}
+#'
+#' @references Robust factor analysis with exponential squared loss. Jiaqi Hu, Tingyin Wang, Xueqin Wang. Journal of Multivariate Analysis 2026, 213 105567; doi:10.1016/j.jmva.2025.105567
+#' @author Jiaqi Hu
+#'
+#' @examples
+#' \donttest{
+#' # Assuming gendata() is defined in your package
+#' dat = gendata()
+#' REFA_FN(dat$Y, rmax = 8)
+#' }
+#' @export
 REFA_FN <- function(Y, rmax = 8, tau = 0.75, q = 0.1, eps = 1e-04, init = TRUE) {
   T = nrow(Y)
   N = ncol(Y)
